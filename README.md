@@ -1,770 +1,588 @@
-# \# 💼 Financial Risk RAG \& AI Agent Assistant
+\# 💼 Financial Risk RAG \& AI Agent Assistant
 
-# 
 
-# > A production-ready, domain-focused GenAI assistant over financial policy and risk documents — built with RAG, hybrid search, LangChain, LangGraph, FastAPI, and Docker. Fully free to run using Groq LLM + HuggingFace local embeddings.
 
-# 
+> A production-ready GenAI assistant over financial policy and risk documents — built with RAG, hybrid search, LangChain, FastAPI, and Docker. Fully free using Groq LLM + HuggingFace embeddings.
 
-# !\[Python](https://img.shields.io/badge/Python-3.11-blue)
 
-# !\[FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)
 
-# !\[LangChain](https://img.shields.io/badge/LangChain-0.2.6-orange)
+!\[Python](https://img.shields.io/badge/Python-3.11-blue)
 
-# !\[LangGraph](https://img.shields.io/badge/LangGraph-0.1.9-red)
+!\[FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)
 
-# !\[Docker](https://img.shields.io/badge/Docker-ready-blue)
+!\[LangChain](https://img.shields.io/badge/LangChain-0.2.6-orange)
 
-# !\[Groq](https://img.shields.io/badge/LLM-Groq-purple)
+!\[Docker](https://img.shields.io/badge/Docker-ready-blue)
 
-# !\[License](https://img.shields.io/badge/license-MIT-green)
+!\[Groq](https://img.shields.io/badge/LLM-Groq-purple)
 
-# 
+!\[License](https://img.shields.io/badge/license-MIT-green)
 
-# \---
 
-# 
 
-# \## 📌 Project Overview
+\---
 
-# 
 
-# This project solves a real-world problem in the financial industry: \*\*how do you make large, complex risk policy documents instantly queryable using AI?\*\*
 
-# 
+\## 📌 Project Overview
 
-# Instead of manually searching through hundreds of pages of credit risk policies, market risk frameworks, and operational guidelines, this assistant lets you ask natural language questions and get precise, cited answers in seconds.
 
-# 
 
-# \*\*Example:\*\*
+This project solves a real-world problem in the financial industry: \*\*how do you make large, complex risk policy documents instantly queryable using AI?\*\*
 
-# ```
 
-# Q: What is the single obligor credit limit?
 
-# A: According to the credit risk policy, the single obligor credit limit 
+Instead of manually searching through hundreds of pages of credit risk policies, market risk frameworks, and operational guidelines, this assistant lets you ask natural language questions and get precise, cited answers in seconds.
 
-# &#x20;  is max 10% of Tier 1 capital.
 
-# &#x20;  Source: docs/credit\_risk\_policy.txt
 
-# ```
+\*\*Example:\*\*
 
-# 
 
-# \---
 
-# 
+```
 
-# \## 🎯 Key Features
+Q: What is the single obligor credit limit?
 
-# 
+A: According to the credit risk policy, the single obligor credit limit
 
-# | Feature | Details |
+&#x20;  is max 10% of Tier 1 capital.
 
-# |---|---|
+&#x20;  Source: docs/credit\_risk\_policy.txt
 
-# | 🔍 \*\*Hybrid Search\*\* | Combines BM25 keyword search + FAISS semantic search for best retrieval |
+```
 
-# | 🤖 \*\*LLM Answering\*\* | Uses Groq (free) with llama-3.1-8b-instant for fast responses |
 
-# | 📄 \*\*Document Ingestion\*\* | Upload any PDF or TXT financial document via API |
 
-# | 🔀 \*\*Multi-Provider LLM\*\* | Switch between Groq, OpenAI, Anthropic via one `.env` config |
+\---
 
-# | 📊 \*\*Built-in Evals\*\* | Faithfulness, hallucination, and relevance scoring |
 
-# | 🐳 \*\*Dockerized\*\* | One command to run the entire stack |
 
-# | ⚡ \*\*FastAPI\*\* | Production-grade REST API with auto Swagger docs |
+\## 🎯 Key Features
 
-# | 🔁 \*\*CI Pipeline\*\* | GitHub Actions runs tests + evals on every push |
 
-# 
 
-# \---
+| Feature | Details |
 
-# 
+|---|---|
 
-# \## 🏗️ System Architecture
+| 🔍 \*\*Hybrid Search\*\* | BM25 keyword search + FAISS semantic search combined |
 
-# 
+| 🤖 \*\*LLM Answering\*\* | Groq llama-3.1-8b-instant — free and ultra-fast |
 
-# ```
+| 📄 \*\*Document Ingestion\*\* | Upload any PDF or TXT document via API |
 
-# ┌─────────────────────────────────────────────────────┐
+| 🔀 \*\*Multi-Provider LLM\*\* | Switch between Groq, OpenAI, Anthropic via `.env` |
 
-# │                   User / Client                      │
+| 📊 \*\*Built-in Evals\*\* | Faithfulness, hallucination, and relevance scoring |
 
-# │         (Swagger UI / curl / Frontend)               │
+| 🐳 \*\*Dockerized\*\* | One command to run the entire stack |
 
-# └──────────────────────┬──────────────────────────────┘
+| ⚡ \*\*FastAPI\*\* | Production-grade REST API with auto Swagger docs |
 
-# &#x20;                      │ HTTP POST /chat
+| 🔁 \*\*CI Pipeline\*\* | GitHub Actions runs tests and evals on every push |
 
-# &#x20;                      ▼
 
-# ┌─────────────────────────────────────────────────────┐
 
-# │                  FastAPI Server                      │
+\---
 
-# │              (uvicorn on port 8000)                  │
 
-# │                                                      │
 
-# │   /health   /chat   /ingest                          │
+\## 🏗️ System Architecture
 
-# └──────────────────────┬──────────────────────────────┘
 
-# &#x20;                      │
 
-# &#x20;                      ▼
+```
 
-# ┌─────────────────────────────────────────────────────┐
+User Query
 
-# │              Hybrid RAG Retriever                    │
+&#x20;   │
 
-# │                                                      │
+&#x20;   ▼
 
-# │   ┌─────────────────┐    ┌──────────────────┐       │
+FastAPI /chat endpoint
 
-# │   │  BM25 Retriever │    │  FAISS Retriever  │       │
+&#x20;   │
 
-# │   │ (keyword match) │    │ (semantic search) │       │
+&#x20;   ▼
 
-# │   └────────┬────────┘    └────────┬─────────┘       │
+Hybrid Retriever
 
-# │            │     40% weight       │  60% weight      │
+&#x20;   ├── BM25 Retriever (40%) — keyword match
 
-# │            └──────────┬───────────┘                  │
+&#x20;   └── FAISS Retriever (60%) — semantic search
 
-# │                       │                              │
+&#x20;   │
 
-# │              EnsembleRetriever                       │
+&#x20;   ▼
 
-# │            (top-k merged results)                    │
+EnsembleRetriever — top-k merged results
 
-# └──────────────────────┬──────────────────────────────┘
+&#x20;   │
 
-# &#x20;                      │ Retrieved Context
+&#x20;   ▼
 
-# &#x20;                      ▼
+Groq LLM (llama-3.1-8b-instant)
 
-# ┌─────────────────────────────────────────────────────┐
+System Prompt + Context + Question
 
-# │                  LLM (via Groq)                      │
+&#x20;   │
 
-# │          llama-3.1-8b-instant (free)                 │
+&#x20;   ▼
 
-# │                                                      │
+Response: { answer, sources, latency\_ms }
 
-# │  System Prompt + Context + Question → Answer         │
+```
 
-# └──────────────────────┬──────────────────────────────┘
 
-# &#x20;                      │
 
-# &#x20;                      ▼
+\---
 
-# ┌─────────────────────────────────────────────────────┐
 
-# │                API Response                          │
 
-# │  { answer, sources, latency\_ms }                     │
+\## 🧱 Tech Stack
 
-# └─────────────────────────────────────────────────────┘
 
-# ```
 
-# 
+| Layer | Technology | Purpose |
 
-# \---
+|---|---|---|
 
-# 
+| \*\*LLM\*\* | Groq llama-3.1-8b-instant | Free, 560 tokens/sec inference |
 
-# \## 🧱 Tech Stack
+| \*\*Embeddings\*\* | HuggingFace all-MiniLM-L6-v2 | Free, runs locally |
 
-# 
+| \*\*Vector Store\*\* | FAISS | Fast in-memory similarity search |
 
-# | Layer | Technology | Why |
+| \*\*Keyword Search\*\* | BM25 (rank-bm25) | Exact term matching |
 
-# |---|---|---|
+| \*\*Hybrid Search\*\* | LangChain EnsembleRetriever | Best of semantic + keyword |
 
-# | \*\*LLM\*\* | Groq llama-3.1-8b-instant | Free, ultra-fast (560 tokens/sec) |
+| \*\*Orchestration\*\* | LangChain + LangGraph | Modular AI pipelines |
 
-# | \*\*Embeddings\*\* | HuggingFace all-MiniLM-L6-v2 | Free, runs locally, no API needed |
+| \*\*API\*\* | FastAPI + Uvicorn | Async, high-performance REST |
 
-# | \*\*Vector Store\*\* | FAISS | Fast similarity search, runs in-memory |
+| \*\*Infra\*\* | Docker + Docker Compose | One-command deployment |
 
-# | \*\*Keyword Search\*\* | BM25 (rank-bm25) | Handles exact term matching |
+| \*\*CI/CD\*\* | GitHub Actions | Automated tests and evals |
 
-# | \*\*Hybrid Search\*\* | LangChain EnsembleRetriever | Best of both semantic + keyword |
+| \*\*Evals\*\* | Custom LLM-as-judge | Quality measurement |
 
-# | \*\*Orchestration\*\* | LangChain + LangGraph | Modular, production-grade pipelines |
 
-# | \*\*API Framework\*\* | FastAPI + Uvicorn | Async, high-performance REST API |
 
-# | \*\*Containerization\*\* | Docker + Docker Compose | One-command deployment |
+\---
 
-# | \*\*CI/CD\*\* | GitHub Actions | Automated testing + evals on push |
 
-# | \*\*Evals\*\* | Custom LLM-as-judge | Faithfulness, hallucination, relevance |
 
-# 
+\## 📁 Project Structure
 
-# \---
 
-# 
 
-# \## 📁 Project Structure
+```
 
-# 
+financial-risk-rag/
 
-# ```
+│
 
-# financial-risk-rag/
+├── app/
 
-# │
+│   ├── main.py                   # FastAPI entrypoint
 
-# ├── app/                          # FastAPI application
+│   ├── config.py                 # LLM provider switcher
 
-# │   ├── main.py                   # App entrypoint, route registration
+│   └── routes/
 
-# │   ├── config.py                 # LLM provider switcher (Groq/OpenAI/Anthropic)
+│       ├── chat.py               # POST /chat
 
-# │   └── routes/
+│       └── ingest.py             # POST /ingest
 
-# │       ├── chat.py               # POST /chat — RAG query endpoint
+│
 
-# │       └── ingest.py             # POST /ingest — document upload endpoint
+├── rag/
 
-# │
+│   ├── loader.py                 # Document loader and chunker
 
-# ├── rag/                          # Retrieval-Augmented Generation pipeline
+│   ├── embedder.py               # HuggingFace embeddings
 
-# │   ├── loader.py                 # Load \& chunk PDF/TXT documents
+│   ├── indexer.py                # FAISS index builder
 
-# │   ├── embedder.py               # HuggingFace embedding wrapper
+│   └── retriever.py              # Hybrid BM25 + FAISS retriever
 
-# │   ├── indexer.py                # Build \& save FAISS index
+│
 
-# │   └── retriever.py              # Hybrid BM25 + FAISS retriever
+├── agent/
 
-# │
+│   ├── graph.py                  # RAG pipeline
 
-# ├── agent/                        # LangGraph AI agent
+│   ├── tools.py                  # Agent tools
 
-# │   ├── graph.py                  # RAG pipeline (retrieve → generate)
+│   └── prompts.py                # System prompts
 
-# │   ├── tools.py                  # Agent tools (doc search, risk scorer)
+│
 
-# │   └── prompts.py                # System prompts for financial domain
+├── evals/
 
-# │
+│   ├── faithfulness.py           # Groundedness eval
 
-# ├── evals/                        # LLM-as-judge evaluation scripts
+│   ├── hallucination.py          # Hallucination detection
 
-# │   ├── faithfulness.py           # Is the answer grounded in context?
+│   └── relevance.py              # Context relevance eval
 
-# │   ├── hallucination.py          # Does the answer contain made-up info?
+│
 
-# │   └── relevance.py              # Is the retrieved context relevant?
+├── docs/
 
-# │
+│   ├── credit\_risk\_policy.txt
 
-# ├── docs/                         # Sample financial documents
+│   ├── market\_risk\_framework.txt
 
-# │   ├── credit\_risk\_policy.txt    # Credit risk limits, assessment criteria
+│   └── operational\_risk\_guidelines.txt
 
-# │   ├── market\_risk\_framework.txt # VaR, stress testing, FX/equity limits
+│
 
-# │   └── operational\_risk\_guidelines.txt  # Controls, BCP, KRIs
+├── tests/
 
-# │
+│   ├── test\_rag.py
 
-# ├── tests/                        # Unit tests
+│   └── test\_agent.py
 
-# │   ├── test\_rag.py               # Tests for document loading, retrieval
+│
 
-# │   └── test\_agent.py             # Tests for agent response generation
+├── .github/workflows/ci.yml      # GitHub Actions CI
 
-# │
+├── Dockerfile
 
-# ├── .github/
+├── docker-compose.yml
 
-# │   └── workflows/
+├── requirements.txt
 
-# │       └── ci.yml                # GitHub Actions CI pipeline
+└── .env.example
 
-# │
+```
 
-# ├── Dockerfile                    # Container build instructions
 
-# ├── docker-compose.yml            # Multi-service orchestration
 
-# ├── requirements.txt              # Python dependencies
+\---
 
-# ├── .env.example                  # Environment variable template
 
-# └── README.md                     # You are here!
 
-# ```
+\## 🚀 Quickstart
 
-# 
 
-# \---
 
-# 
+\### Prerequisites
 
-# \## 🚀 Quickstart
+\- Docker Desktop installed and running
 
-# 
+\- Free Groq API key from https://console.groq.com
 
-# \### Prerequisites
 
-# \- Docker Desktop installed and running
 
-# \- Groq API key (free at https://console.groq.com)
+\### 1. Clone the repo
 
-# 
+```bash
 
-# \### 1. Clone the repo
+git clone https://github.com/SrilakshmiKokanti/financial-risk-rag.git
 
-# ```bash
+cd financial-risk-rag
 
-# git clone https://github.com/SrilakshmiKokanti/financial-risk-rag.git
+```
 
-# cd financial-risk-rag
 
-# ```
 
-# 
+\### 2. Set up environment
 
-# \### 2. Set up environment
+```bash
 
-# ```bash
+cp .env.example .env
 
-# cp .env.example .env
+```
 
-# ```
 
-# 
 
-# Edit `.env`:
+Edit `.env`:
 
-# ```env
+```env
 
-# LLM\_PROVIDER=groq
+LLM\_PROVIDER=groq
 
-# GROQ\_API\_KEY=your\_groq\_api\_key\_here
+GROQ\_API\_KEY=your\_groq\_api\_key\_here
 
-# GROQ\_MODEL=llama-3.1-8b-instant
+GROQ\_MODEL=llama-3.1-8b-instant
 
-# EMBEDDING\_MODEL=all-MiniLM-L6-v2
+EMBEDDING\_MODEL=all-MiniLM-L6-v2
 
-# FAISS\_INDEX\_PATH=./faiss\_index
+FAISS\_INDEX\_PATH=./faiss\_index
 
-# DOCS\_PATH=./docs
+DOCS\_PATH=./docs
 
-# ```
+```
 
-# 
 
-# \### 3. Run with Docker
 
-# ```bash
+\### 3. Run with Docker
 
-# docker-compose up --build
+```bash
 
-# ```
+docker-compose up --build
 
-# 
+```
 
-# \### 4. Open Swagger UI
 
-# ```
 
-# http://localhost:8000/docs
+\### 4. Open Swagger UI
 
-# ```
+```
 
-# 
+http://localhost:8000/docs
 
-# \---
+```
 
-# 
 
-# \## 📬 API Reference
 
-# 
+\---
 
-# \### `GET /health`
 
-# Check if the server is running.
 
-# 
+\## 📬 API Reference
 
-# \*\*Response:\*\*
 
-# ```json
 
-# {"status": "ok"}
+\### GET /health
 
-# ```
+```json
 
-# 
+{ "status": "ok" }
 
-# \---
+```
 
-# 
 
-# \### `POST /chat`
 
-# Ask a question about financial risk documents.
+\### POST /chat
 
-# 
 
-# \*\*Request:\*\*
 
-# ```json
+\*\*Request:\*\*
 
-# {
+```json
 
-# &#x20; "query": "What is the single obligor credit limit?"
+{
 
-# }
+&#x20; "query": "What is the single obligor credit limit?"
 
-# ```
+}
 
-# 
+```
 
-# \*\*Response:\*\*
 
-# ```json
 
-# {
+\*\*Response:\*\*
 
-# &#x20; "answer": "According to the credit risk policy, the single obligor credit limit is max 10% of Tier 1 capital.",
+```json
 
-# &#x20; "sources": \[
+{
 
-# &#x20;   "./docs/credit\_risk\_policy.txt",
+&#x20; "answer": "The single obligor credit limit is max 10% of Tier 1 capital.",
 
-# &#x20;   "./docs/market\_risk\_framework.txt",
+&#x20; "sources": \[
 
-# &#x20;   "./docs/operational\_risk\_guidelines.txt"
+&#x20;   "./docs/credit\_risk\_policy.txt"
 
-# &#x20; ],
+&#x20; ],
 
-# &#x20; "latency\_ms": 1842.3
+&#x20; "latency\_ms": 1842.3
 
-# }
+}
 
-# ```
+```
 
-# 
 
-# \---
 
-# 
+\### POST /ingest
 
-# \### `POST /ingest`
+```bash
 
-# Upload your own financial document to index it.
+curl -X POST http://localhost:8000/ingest \\
 
-# 
+&#x20; -F "file=@your\_document.pdf"
 
-# ```bash
+```
 
-# curl -X POST http://localhost:8000/ingest \\
 
-# &#x20; -F "file=@your\_document.pdf"
 
-# ```
+\---
 
-# 
 
-# \*\*Response:\*\*
 
-# ```json
+\## 🔀 Switching LLM Providers
 
-# {"message": "Indexed your\_document.pdf successfully."}
 
-# ```
 
-# 
+Update one line in `.env` — no code changes needed:
 
-# \---
 
-# 
 
-# \## 🔀 Switching LLM Providers
+```env
 
-# 
+\# Groq (Free)
 
-# No code changes needed — just update `.env`:
+LLM\_PROVIDER=groq
 
-# 
+GROQ\_API\_KEY=gsk\_...
 
-# ```env
 
-# \# Groq (Free)
 
-# LLM\_PROVIDER=groq
+\# OpenAI
 
-# GROQ\_API\_KEY=gsk\_...
+LLM\_PROVIDER=openai
 
-# GROQ\_MODEL=llama-3.1-8b-instant
+OPENAI\_API\_KEY=sk-...
 
-# 
 
-# \# OpenAI
 
-# LLM\_PROVIDER=openai
+\# Anthropic
 
-# OPENAI\_API\_KEY=sk-...
+LLM\_PROVIDER=anthropic
 
-# OPENAI\_MODEL=gpt-4o
+ANTHROPIC\_API\_KEY=sk-ant-...
 
-# 
+```
 
-# \# Anthropic
 
-# LLM\_PROVIDER=anthropic
 
-# ANTHROPIC\_API\_KEY=sk-ant-...
+\---
 
-# ANTHROPIC\_MODEL=claude-3-5-sonnet-20241022
 
-# ```
 
-# 
+\## 📊 Evaluation Framework
 
-# Then restart:
 
-# ```bash
 
-# docker-compose down \&\& docker-compose up
+| Eval | What It Measures | Pass Threshold |
 
-# ```
+|---|---|---|
 
-# 
+| Faithfulness | Is the answer grounded in context? | >= 0.7 |
 
-# \---
+| Hallucination | Does the answer contain made-up info? | >= 0.6 |
 
-# 
+| Relevance | Is retrieved context relevant to the query? | >= 0.7 |
 
-# \## 📊 Evaluation Framework
 
-# 
 
-# This project includes an LLM-as-judge evaluation framework that scores the quality of RAG responses across three dimensions:
+Run all evals:
 
-# 
+```bash
 
-# \### Faithfulness
+python -m evals.faithfulness
 
-# Measures whether the answer is grounded in the retrieved context (not hallucinated).
+python -m evals.hallucination
 
-# ```bash
+python -m evals.relevance
 
-# python -m evals.faithfulness
+```
 
-# ```
 
-# 
 
-# \### Hallucination
+All three run automatically on every push via GitHub Actions.
 
-# Detects if the answer contains information not present in the source documents.
 
-# ```bash
 
-# python -m evals.hallucination
+\---
 
-# ```
 
-# 
 
-# \### Relevance
+\## 🧪 Tests
 
-# Checks whether the retrieved context is actually relevant to the query.
 
-# ```bash
 
-# python -m evals.relevance
+```bash
 
-# ```
+pytest tests/ -v
 
-# 
+```
 
-# All three evals run automatically via \*\*GitHub Actions CI\*\* on every push to `main`.
 
-# 
 
-# \---
+\---
 
-# 
 
-# \## 🧪 Running Tests
 
-# 
+\## 💡 Sample Queries
 
-# ```bash
 
-# pytest tests/ -v
 
-# ```
+| Question | Source |
 
-# 
+|---|---|
 
-# Expected output:
+| What is the single obligor credit limit? | credit\_risk\_policy.txt |
 
-# ```
+| What are the VaR limits for market risk? | market\_risk\_framework.txt |
 
-# tests/test\_rag.py::test\_load\_documents\_returns\_list PASSED
+| What controls exist for operational risk? | operational\_risk\_guidelines.txt |
 
-# tests/test\_rag.py::test\_risk\_score\_critical PASSED
+| What is the BCP recovery time objective? | operational\_risk\_guidelines.txt |
 
-# tests/test\_rag.py::test\_risk\_score\_low PASSED
+| How is credit risk provisioned under IFRS 9? | credit\_risk\_policy.txt |
 
-# tests/test\_agent.py::test\_run\_agent\_returns\_answer PASSED
+| What is the maximum FX net open position? | market\_risk\_framework.txt |
 
-# ```
 
-# 
 
-# \---
+\---
 
-# 
 
-# \## 💡 Sample Queries to Try
 
-# 
+\## 🗺️ Roadmap
 
-# | Question | Source Document |
 
-# |---|---|
 
-# | What is the single obligor credit limit? | credit\_risk\_policy.txt |
+\- \[ ] Streamlit / React frontend UI
 
-# | What are the VaR limits for market risk? | market\_risk\_framework.txt |
+\- \[ ] Conversation memory (multi-turn chat)
 
-# | What controls exist for operational risk? | operational\_risk\_guidelines.txt |
+\- \[ ] Reranking with cross-encoder model
 
-# | What is the BCP recovery time objective? | operational\_risk\_guidelines.txt |
+\- \[ ] Support DOCX, CSV, Excel ingestion
 
-# | How is credit risk provisioned under IFRS 9? | credit\_risk\_policy.txt |
+\- \[ ] Response caching for repeated queries
 
-# | What is the maximum FX net open position? | market\_risk\_framework.txt |
 
-# | What is the DV01 limit for interest rate risk? | market\_risk\_framework.txt |
 
-# | What triggers a credit facility early warning? | credit\_risk\_policy.txt |
+\---
 
-# 
 
-# \---
 
-# 
+\## 👩‍💻 Skills Demonstrated
 
-# \## 🔁 CI/CD Pipeline
 
-# 
 
-# Every push to `main` triggers the GitHub Actions pipeline:
+\- Retrieval-Augmented Generation (RAG)
 
-# 
+\- Vector databases (FAISS)
 
-# ```
+\- Hybrid search (BM25 + semantic)
 
-# Push to main
+\- LLM orchestration (LangChain, LangGraph)
 
-# &#x20;   │
+\- REST API development (FastAPI)
 
-# &#x20;   ├── Install dependencies
+\- Containerization (Docker)
 
-# &#x20;   ├── Run pytest unit tests
+\- LLM evaluation frameworks
 
-# &#x20;   ├── Run faithfulness eval
+\- CI/CD (GitHub Actions)
 
-# &#x20;   ├── Run hallucination eval
 
-# &#x20;   └── Run relevance eval
 
-# ```
+\---
 
-# 
 
-# Pipeline config: `.github/workflows/ci.yml`
 
-# 
+\## 📄 License
 
-# \---
 
-# 
 
-# \## 🗺️ Roadmap
-
-# 
-
-# \- \[ ] Streamlit / React frontend UI
-
-# \- \[ ] Conversation memory (multi-turn chat)
-
-# \- \[ ] Reranking with cross-encoder model
-
-# \- \[ ] Support DOCX, CSV, Excel ingestion
-
-# \- \[ ] User authentication on API
-
-# \- \[ ] Response caching for repeated queries
-
-# \- \[ ] Async document ingestion queue
-
-# 
-
-# \---
-
-# 
-
-# \## 👩‍💻 About
-
-# 
-
-# Built as a portfolio project demonstrating production-grade GenAI engineering — covering the full stack from document ingestion to hybrid retrieval, LLM generation, evaluation, containerization, and CI/CD.
-
-# 
-
-# \*\*Skills demonstrated:\*\*
-
-# \- Retrieval-Augmented Generation (RAG)
-
-# \- Vector databases (FAISS)
-
-# \- Hybrid search (BM25 + semantic)
-
-# \- LLM orchestration (LangChain, LangGraph)
-
-# \- REST API development (FastAPI)
-
-# \- Containerization (Docker)
-
-# \- LLM evaluation frameworks
-
-# \- CI/CD (GitHub Actions)
-
-# 
-
-# \---
-
-# 
-
-# \## 📄 License
-
-# 
-
-# MIT License — free to use, modify, and distribute.
+MIT License — free to use, modify, and distribute.
 
