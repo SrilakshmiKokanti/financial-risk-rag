@@ -1,0 +1,39 @@
+OPERATIONAL RISK MANAGEMENT GUIDELINES - Version 1.8 | June 2024
+
+1. DEFINITION
+Risk of loss from failed internal processes, people, systems, or external events.
+Includes legal risk; excludes strategic and reputational risk.
+
+2. RISK CATEGORIES
+Internal Fraud: unauthorized activity, theft.
+External Fraud: hacking, phishing, third-party theft.
+Employment: discrimination, health and safety violations.
+Business Disruption: system failures, utility outages.
+Execution: transaction errors, data entry errors.
+
+3. RISK ASSESSMENT
+RCSA: annually by each business unit.
+KRIs: monitored monthly; breaches trigger immediate review.
+Losses above $10,000 recorded within 48 hours.
+
+4. CONTROLS
+Preventive: segregation of duties, dual auth for payments above $100k,
+mandatory vacation (10+ days), background checks.
+Detective: transaction monitoring, audit trails, reconciliation.
+Corrective: incident response, BCP, insurance.
+
+5. BUSINESS CONTINUITY
+BCP tested semi-annually.
+RTO: 4 hours for critical systems. RPO: 1 hour max data loss.
+
+6. TECHNOLOGY RISK
+Critical patches: within 72 hours.
+Pen testing: annually and after major changes.
+
+7. REGULATORY CAPITAL
+Standardized Approach (SA) under Basel III.
+Capital maintained at 115% of regulatory minimum.
+
+8. TRAINING
+All staff: annual operational risk training.
+High-risk roles (IT, Finance, Compliance): semi-annual.

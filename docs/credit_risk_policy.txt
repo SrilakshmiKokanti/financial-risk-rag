@@ -1,0 +1,28 @@
+CREDIT RISK POLICY - Version 3.2 | January 2024
+
+1. OVERVIEW
+Credit risk is the potential loss from a borrower failing to meet its obligations.
+This policy establishes the framework for identifying, measuring, and controlling credit risk.
+
+2. CREDIT RISK APPETITE
+Target NPL ratio: no more than 2.5% of total loan portfolio.
+
+3. CREDIT LIMITS
+Single Obligor: max 10% of Tier 1 capital.
+Sector Concentration: max 25% of total portfolio per industry.
+Geographic: domestic exposures max 70% of total portfolio.
+
+4. CREDIT ASSESSMENT (above $500,000)
+- 3 years audited financial statements
+- Credit score minimum: 650
+- Collateral valuation by approved appraiser
+- Senior Credit Officer approval
+
+5. RISK MITIGATION
+Accepted collateral: real estate (LTV max 75%), marketable securities (haircut 20%),
+investment-grade guarantees.
+
+6. PROVISIONING (IFRS 9 ECL)
+Stage 1: 12-month ECL (performing)
+Stage 2: Lifetime ECL (significant deterioration)
+Stage 3: Lifetime ECL (credit impaired)

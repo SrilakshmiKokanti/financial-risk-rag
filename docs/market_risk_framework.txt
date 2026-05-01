@@ -1,0 +1,34 @@
+MARKET RISK FRAMEWORK - Version 2.1 | March 2024
+
+1. INTRODUCTION
+Market risk is the risk of losses from movements in market prices.
+Covers: equity, interest rate, FX, and commodity risk.
+
+2. VALUE AT RISK (VaR)
+Methodology: Historical simulation (500-day lookback)
+Confidence: 99% | Holding period: 1-day and 10-day
+Limit: $50M (1-day, 99%)
+
+3. STRESSED VaR
+Based on 2008 financial crisis scenario. Limit: $120M.
+
+4. INTEREST RATE RISK
+DV01 limit: $2M per basis point.
+Trading book max duration: 3 years. Banking book: 7 years.
+
+5. FX RISK
+Net open position: max 15% of Tier 1 capital.
+Overnight FX positions require prior Market Risk desk approval.
+
+6. EQUITY RISK
+Single stock: max 5% of trading book NAV.
+Beta-adjusted exposure limit: 1.2x benchmark.
+
+7. STRESS TESTS (Quarterly)
+- Yield curve shift: +/- 200bps
+- Equity crash: -30%
+- FX dislocation: +/- 20% major pairs
+
+8. GOVERNANCE
+Market Risk Committee: bi-weekly.
+Breaches reported in 2h, escalated to CRO in 24h.
